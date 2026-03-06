@@ -31,7 +31,7 @@ int encrypt(const EVP_CIPHER *cipherType, unsigned char *plaintext,
    * IV size for *most* modes is the same as the block size. For AES this
    * is 128 bits
    */
-  if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+  if (1 != EVP_EncryptInit_ex(ctx, cipherType, NULL, key, iv))
     handleErrors();
 
   /*
@@ -79,7 +79,7 @@ int decrypt(const EVP_CIPHER *cipherType, unsigned char *ciphertext,
    * IV size for *most* modes is the same as the block size. For AES this
    * is 128 bits
    */
-  if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+  if (1 != EVP_DecryptInit_ex(ctx, cipherType, NULL, key, iv))
     handleErrors();
 
   /*
