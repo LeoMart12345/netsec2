@@ -12,7 +12,7 @@ void handleErrors(void) {
   abort();
 }
 
-// decrypt
+// encryption
 int encrypt(const EVP_CIPHER *cipherType, unsigned char *plaintext,
             int plaintext_len, unsigned char *key, unsigned char *iv,
             unsigned char *ciphertext) {
@@ -55,7 +55,7 @@ int encrypt(const EVP_CIPHER *cipherType, unsigned char *plaintext,
   return ciphertext_len;
 }
 
-// Encrypt
+// decryption
 int decrypt(const EVP_CIPHER *cipherType, unsigned char *ciphertext,
             int ciphertext_len, unsigned char *key, unsigned char *iv,
             unsigned char *plaintext) {
