@@ -13,5 +13,5 @@ int decrypt(const EVP_CIPHER *cipherType, unsigned char *ciphertext,
 
 void handleErrors(void);
 
-double benchmark(EVP_CIPHER *cipherType, unsigned char *key, unsigned char *iv,
-                 long dataSize, bool doEncrypt);
+double benchmark(const EVP_CIPHER *cipherType, unsigned char *key,
+                 unsigned char *iv, long dataSize, bool doEncrypt);

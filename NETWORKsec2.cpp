@@ -101,74 +101,10 @@ int decrypt(const EVP_CIPHER *cipherType, unsigned char *ciphertext,
   EVP_CIPHER_CTX_free(ctx);
 
   return plaintext_len;
-} // AES
-
-// ARIA
-
-// Camellia
-
-int main() {
-
-  ///////////////////////////////////////////////////////////////////////
-  /* A 256 bit key */
-  unsigned char key256[32];
-  unsigned char key128[16];
-  unsigned char iv[16];
-
-  RAND_bytes(key256, sizeof(key256));
-  RAND_bytes(key128, sizeof(key128));
-  RAND_bytes(iv, sizeof(iv));
-
-  /* A 128 bit IV */
-  unsigned char *iv16[16] = {"012345678901234"};
-  unsigned char *iv32[32] = {"012345678901234012345678901234"};
-  /* Message to be encrypted */
-  unsigned char *plaintext =
-      (unsigned char *)"The quick brown fox jumps over the lazy dog";
-
-  unsigned char ciphertext[128];
-
-  /* Buffer for the decrypted text */
-  unsigned char decryptedtext[128];
-  int decryptedtext_len, ciphertext_len;
-
-  auto start = std::chrono::system_clock::now();
-  /* Encrypt the plaintext */
-  ciphertext_len = encrypt(EVP_aes_256_cbc(), plaintext,
-                           strlen((char *)plaintext), key, iv, ciphertext);
-
-  auto end = std::chrono::system_clock::now();
-  /* Do something useful with the ciphertext here */
-  auto timeElapsed =
-      std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-
-  std::cout << "nanoseconds: " << timeElapsed.count() << std::endl;
-
-  printf("Ciphertext is:\n");
-  BIO_dump_fp(stdout, (const char *)ciphertext, ciphertext_len);
-
-  /* Decrypt the ciphertext */
-  decryptedtext_len = decrypt(EVP_aes_256_cbc(), ciphertext, ciphertext_len,
-                              key256, iv, decryptedtext);
-
-  /* Add a NULL terminator. We are expecting printable text */
-  decryptedtext[decryptedtext_len] = '\0';
-
-  /* Show the decrypted text */
-  printf("Decrypted text is:\n");
-  printf("%s\n", decryptedtext);
-
-  // 100MB
-  benchmark(EVP_aes_256_cbc(), key256, iv, 100 * 1024 * 1024, true);
-
-  // 1000MB
-  benchmark(EVP_aes_256_cbc(), key256, iv, 1000 * 1024 * 1024, true);
-
-  return 0;
 }
 
-double benchmark(EVP_CIPHER *cipherType, unsigned char *key, unsigned char *iv,
-                 long dataSize, bool doEncrypt) {
+double benchmark(const EVP_CIPHER *cipherType, unsigned char *key,
+                 unsigned char *iv, long dataSize, bool doEncrypt) {
 
   unsigned char *plaintext = (unsigned char *)malloc(dataSize);
   unsigned char *ciphertext = (unsigned char *)malloc(dataSize + 16);
@@ -195,4 +131,31 @@ double benchmark(EVP_CIPHER *cipherType, unsigned char *key, unsigned char *iv,
 
   return (end.tv_sec - start.tv_sec) * 1000.0 +
          (end.tv_nsec - start.tv_nsec) / 1e6;
+}
+
+int main() {
+  unsigned char key256[32];
+  unsigned char key128[16];
+  unsigned char iv[16];
+
+  RAND_bytes(key256, sizeof(key256));
+  RAND_bytes(key128, sizeof(key128));
+  RAND_bytes(iv, sizeof(iv));
+
+  // 100MB
+  double result1 =
+      benchmark(EVP_aes_256_cbc(), key256, iv, 100 * 1024 * 1024, true);
+  std::cout << "AES-256-CBC 100MB: " << result1 << "ms\n";
+
+  // 1000MB
+  double result2 =
+      benchmark(EVP_aes_256_cbc(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "AES-256-CBC 1000MB: " << result2 << "ms\n";
+
+  // ARIA
+
+  double result3 =
+      benchmark(EVP_aria_256_cbc(), key256, iv, 100 * 1024 * 1024, true);
+
+  return 0;
 }
