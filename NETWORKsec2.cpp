@@ -137,25 +137,202 @@ int main() {
   unsigned char key256[32];
   unsigned char key128[16];
   unsigned char iv[16];
-
   RAND_bytes(key256, sizeof(key256));
   RAND_bytes(key128, sizeof(key128));
   RAND_bytes(iv, sizeof(iv));
 
-  // 100MB
-  double result1 =
+  // AES 256
+  double result =
       benchmark(EVP_aes_256_cbc(), key256, iv, 100 * 1024 * 1024, true);
-  std::cout << "AES-256-CBC 100MB: " << result1 << "ms\n";
+  std::cout << "AES-256-CBC   encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_256_cbc(), key256, iv, 100 * 1024 * 1024, false);
+  std::cout << "AES-256-CBC   decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_256_cbc(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "AES-256-CBC   encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aes_256_cbc(), key256, iv, 1000 * 1024 * 1024, false);
+  std::cout << "AES-256-CBC   decrypt 1000MB: " << result << "ms\n";
 
-  // 1000MB
-  double result2 =
-      benchmark(EVP_aes_256_cbc(), key256, iv, 1000 * 1024 * 1024, true);
-  std::cout << "AES-256-CBC 1000MB: " << result2 << "ms\n";
+  result = benchmark(EVP_aes_256_ecb(), key256, iv, 100 * 1024 * 1024, true);
+  std::cout << "AES-256-ECB   encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_256_ecb(), key256, iv, 100 * 1024 * 1024, false);
+  std::cout << "AES-256-ECB   decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_256_ecb(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "AES-256-ECB   encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aes_256_ecb(), key256, iv, 1000 * 1024 * 1024, false);
+  std::cout << "AES-256-ECB   decrypt 1000MB: " << result << "ms\n";
 
-  // ARIA
+  result = benchmark(EVP_aes_256_ctr(), key256, iv, 100 * 1024 * 1024, true);
+  std::cout << "AES-256-CTR   encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_256_ctr(), key256, iv, 100 * 1024 * 1024, false);
+  std::cout << "AES-256-CTR   decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_256_ctr(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "AES-256-CTR   encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aes_256_ctr(), key256, iv, 1000 * 1024 * 1024, false);
+  std::cout << "AES-256-CTR   decrypt 1000MB: " << result << "ms\n";
 
-  double result3 =
-      benchmark(EVP_aria_256_cbc(), key256, iv, 100 * 1024 * 1024, true);
+  // AES 128
+  result = benchmark(EVP_aes_128_cbc(), key128, iv, 100 * 1024 * 1024, true);
+  std::cout << "AES-128-CBC   encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_128_cbc(), key128, iv, 100 * 1024 * 1024, false);
+  std::cout << "AES-128-CBC   decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_128_cbc(), key128, iv, 1000 * 1024 * 1024, true);
+  std::cout << "AES-128-CBC   encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aes_128_cbc(), key128, iv, 1000 * 1024 * 1024, false);
+  std::cout << "AES-128-CBC   decrypt 1000MB: " << result << "ms\n";
+
+  result = benchmark(EVP_aes_128_ecb(), key128, iv, 100 * 1024 * 1024, true);
+  std::cout << "AES-128-ECB   encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_128_ecb(), key128, iv, 100 * 1024 * 1024, false);
+  std::cout << "AES-128-ECB   decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_128_ecb(), key128, iv, 1000 * 1024 * 1024, true);
+  std::cout << "AES-128-ECB   encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aes_128_ecb(), key128, iv, 1000 * 1024 * 1024, false);
+  std::cout << "AES-128-ECB   decrypt 1000MB: " << result << "ms\n";
+
+  result = benchmark(EVP_aes_128_ctr(), key128, iv, 100 * 1024 * 1024, true);
+  std::cout << "AES-128-CTR   encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_128_ctr(), key128, iv, 100 * 1024 * 1024, false);
+  std::cout << "AES-128-CTR   decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aes_128_ctr(), key128, iv, 1000 * 1024 * 1024, true);
+  std::cout << "AES-128-CTR   encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aes_128_ctr(), key128, iv, 1000 * 1024 * 1024, false);
+  std::cout << "AES-128-CTR   decrypt 1000MB: " << result << "ms\n";
+
+  // ARIA 256
+  result = benchmark(EVP_aria_256_cbc(), key256, iv, 100 * 1024 * 1024, true);
+  std::cout << "ARIA-256-CBC  encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_256_cbc(), key256, iv, 100 * 1024 * 1024, false);
+  std::cout << "ARIA-256-CBC  decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_256_cbc(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "ARIA-256-CBC  encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aria_256_cbc(), key256, iv, 1000 * 1024 * 1024, false);
+  std::cout << "ARIA-256-CBC  decrypt 1000MB: " << result << "ms\n";
+
+  result = benchmark(EVP_aria_256_ecb(), key256, iv, 100 * 1024 * 1024, true);
+  std::cout << "ARIA-256-ECB  encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_256_ecb(), key256, iv, 100 * 1024 * 1024, false);
+  std::cout << "ARIA-256-ECB  decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_256_ecb(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "ARIA-256-ECB  encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aria_256_ecb(), key256, iv, 1000 * 1024 * 1024, false);
+  std::cout << "ARIA-256-ECB  decrypt 1000MB: " << result << "ms\n";
+
+  result = benchmark(EVP_aria_256_ctr(), key256, iv, 100 * 1024 * 1024, true);
+  std::cout << "ARIA-256-CTR  encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_256_ctr(), key256, iv, 100 * 1024 * 1024, false);
+  std::cout << "ARIA-256-CTR  decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_256_ctr(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "ARIA-256-CTR  encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aria_256_ctr(), key256, iv, 1000 * 1024 * 1024, false);
+  std::cout << "ARIA-256-CTR  decrypt 1000MB: " << result << "ms\n";
+
+  // ARIA 128
+  result = benchmark(EVP_aria_128_cbc(), key128, iv, 100 * 1024 * 1024, true);
+  std::cout << "ARIA-128-CBC  encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_128_cbc(), key128, iv, 100 * 1024 * 1024, false);
+  std::cout << "ARIA-128-CBC  decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_128_cbc(), key128, iv, 1000 * 1024 * 1024, true);
+  std::cout << "ARIA-128-CBC  encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aria_128_cbc(), key128, iv, 1000 * 1024 * 1024, false);
+  std::cout << "ARIA-128-CBC  decrypt 1000MB: " << result << "ms\n";
+
+  result = benchmark(EVP_aria_128_ecb(), key128, iv, 100 * 1024 * 1024, true);
+  std::cout << "ARIA-128-ECB  encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_128_ecb(), key128, iv, 100 * 1024 * 1024, false);
+  std::cout << "ARIA-128-ECB  decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_128_ecb(), key128, iv, 1000 * 1024 * 1024, true);
+  std::cout << "ARIA-128-ECB  encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aria_128_ecb(), key128, iv, 1000 * 1024 * 1024, false);
+  std::cout << "ARIA-128-ECB  decrypt 1000MB: " << result << "ms\n";
+
+  result = benchmark(EVP_aria_128_ctr(), key128, iv, 100 * 1024 * 1024, true);
+  std::cout << "ARIA-128-CTR  encrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_128_ctr(), key128, iv, 100 * 1024 * 1024, false);
+  std::cout << "ARIA-128-CTR  decrypt 100MB:  " << result << "ms\n";
+  result = benchmark(EVP_aria_128_ctr(), key128, iv, 1000 * 1024 * 1024, true);
+  std::cout << "ARIA-128-CTR  encrypt 1000MB: " << result << "ms\n";
+  result = benchmark(EVP_aria_128_ctr(), key128, iv, 1000 * 1024 * 1024, false);
+  std::cout << "ARIA-128-CTR  decrypt 1000MB: " << result << "ms\n";
+
+  // Camellia 256
+  result =
+      benchmark(EVP_camellia_256_cbc(), key256, iv, 100 * 1024 * 1024, true);
+  std::cout << "CAM-256-CBC   encrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_256_cbc(), key256, iv, 100 * 1024 * 1024, false);
+  std::cout << "CAM-256-CBC   decrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_256_cbc(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "CAM-256-CBC   encrypt 1000MB: " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_256_cbc(), key256, iv, 1000 * 1024 * 1024, false);
+  std::cout << "CAM-256-CBC   decrypt 1000MB: " << result << "ms\n";
+
+  result =
+      benchmark(EVP_camellia_256_ecb(), key256, iv, 100 * 1024 * 1024, true);
+  std::cout << "CAM-256-ECB   encrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_256_ecb(), key256, iv, 100 * 1024 * 1024, false);
+  std::cout << "CAM-256-ECB   decrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_256_ecb(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "CAM-256-ECB   encrypt 1000MB: " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_256_ecb(), key256, iv, 1000 * 1024 * 1024, false);
+  std::cout << "CAM-256-ECB   decrypt 1000MB: " << result << "ms\n";
+
+  result =
+      benchmark(EVP_camellia_256_ctr(), key256, iv, 100 * 1024 * 1024, true);
+  std::cout << "CAM-256-CTR   encrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_256_ctr(), key256, iv, 100 * 1024 * 1024, false);
+  std::cout << "CAM-256-CTR   decrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_256_ctr(), key256, iv, 1000 * 1024 * 1024, true);
+  std::cout << "CAM-256-CTR   encrypt 1000MB: " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_256_ctr(), key256, iv, 1000 * 1024 * 1024, false);
+  std::cout << "CAM-256-CTR   decrypt 1000MB: " << result << "ms\n";
+
+  // Camellia 128
+  result =
+      benchmark(EVP_camellia_128_cbc(), key128, iv, 100 * 1024 * 1024, true);
+  std::cout << "CAM-128-CBC   encrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_128_cbc(), key128, iv, 100 * 1024 * 1024, false);
+  std::cout << "CAM-128-CBC   decrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_128_cbc(), key128, iv, 1000 * 1024 * 1024, true);
+  std::cout << "CAM-128-CBC   encrypt 1000MB: " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_128_cbc(), key128, iv, 1000 * 1024 * 1024, false);
+  std::cout << "CAM-128-CBC   decrypt 1000MB: " << result << "ms\n";
+
+  result =
+      benchmark(EVP_camellia_128_ecb(), key128, iv, 100 * 1024 * 1024, true);
+  std::cout << "CAM-128-ECB   encrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_128_ecb(), key128, iv, 100 * 1024 * 1024, false);
+  std::cout << "CAM-128-ECB   decrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_128_ecb(), key128, iv, 1000 * 1024 * 1024, true);
+  std::cout << "CAM-128-ECB   encrypt 1000MB: " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_128_ecb(), key128, iv, 1000 * 1024 * 1024, false);
+  std::cout << "CAM-128-ECB   decrypt 1000MB: " << result << "ms\n";
+
+  result =
+      benchmark(EVP_camellia_128_ctr(), key128, iv, 100 * 1024 * 1024, true);
+  std::cout << "CAM-128-CTR   encrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_128_ctr(), key128, iv, 100 * 1024 * 1024, false);
+  std::cout << "CAM-128-CTR   decrypt 100MB:  " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_128_ctr(), key128, iv, 1000 * 1024 * 1024, true);
+  std::cout << "CAM-128-CTR   encrypt 1000MB: " << result << "ms\n";
+  result =
+      benchmark(EVP_camellia_128_ctr(), key128, iv, 1000 * 1024 * 1024, false);
+  std::cout << "CAM-128-CTR   decrypt 1000MB: " << result << "ms\n";
 
   return 0;
 }
