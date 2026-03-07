@@ -121,5 +121,13 @@ int main() {
 
   std::cout << "nanoseconds: " << timeElapsed.count() << std::endl;
 
+  /* A 256 bit key */
+  unsigned char *key = (unsigned char *)"01234567890123456789012345678901";
+  /* A 128 bit IV */
+  unsigned char *iv = (unsigned char *)"0123456789012345";
+  /* Message to be encrypted */
+  unsigned char *plaintext =
+      (unsigned char *)"The quick brown fox jumps over the lazy dog";
+
   return 0;
 }
