@@ -1,5 +1,6 @@
 #include "NETWORKsec2.hpp"
 #include <chrono>
+#include <cstring>
 #include <iostream>
 #include <openssl/err.h>
 #include <openssl/evp.h>
@@ -111,23 +112,46 @@ int decrypt(const EVP_CIPHER *cipherType, unsigned char *ciphertext,
 // Camellia
 
 int main() {
+
+  ///////////////////////////////////////////////////////////////////////
+  /* A 256 bit key */
+  unsigned char key[32] = "0123456789012345678901234567801";
+  /* A 128 bit IV */
+  unsigned char iv[16] = "012345678901234";
+  /* Message to be encrypted */
+  unsigned char *plaintext =
+      (unsigned char *)"The quick brown fox jumps over the lazy dog";
+
+  unsigned char ciphertext[128];
+
+  /* Buffer for the decrypted text */
+  unsigned char decryptedtext[128];
+  int decryptedtext_len, ciphertext_len;
+
   auto start = std::chrono::system_clock::now();
-  // work
+  /* Encrypt the plaintext */
+  ciphertext_len = encrypt(EVP_aes_256_cbc(), plaintext,
+                           strlen((char *)plaintext), key, iv, ciphertext);
 
   auto end = std::chrono::system_clock::now();
-
+  /* Do something useful with the ciphertext here */
   auto timeElapsed =
       std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
 
   std::cout << "nanoseconds: " << timeElapsed.count() << std::endl;
 
-  /* A 256 bit key */
-  unsigned char *key = (unsigned char *)"01234567890123456789012345678901";
-  /* A 128 bit IV */
-  unsigned char *iv = (unsigned char *)"0123456789012345";
-  /* Message to be encrypted */
-  unsigned char *plaintext =
-      (unsigned char *)"The quick brown fox jumps over the lazy dog";
+  printf("Ciphertext is:\n");
+  BIO_dump_fp(stdout, (const char *)ciphertext, ciphertext_len);
 
+  /* Decrypt the ciphertext */
+  decryptedtext_len = decrypt(EVP_aes_256_cbc(), ciphertext, ciphertext_len,
+                              key, iv, decryptedtext);
+
+  /* Add a NULL terminator. We are expecting printable text */
+  decryptedtext[decryptedtext_len] = '\0';
+
+  /* Show the decrypted text */
+  printf("Decrypted text is:\n");
+  printf("%s\n", decryptedtext);
   return 0;
 }
