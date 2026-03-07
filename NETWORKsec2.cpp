@@ -1,6 +1,7 @@
 #include "NETWORKsec2.hpp"
 #include <chrono>
 #include <cstring>
+#include <ctime>
 #include <iostream>
 #include <openssl/err.h>
 #include <openssl/evp.h>
@@ -16,15 +17,12 @@ int encrypt(const EVP_CIPHER *cipherType, unsigned char *plaintext,
             int plaintext_len, unsigned char *key, unsigned char *iv,
             unsigned char *ciphertext) {
   EVP_CIPHER_CTX *ctx;
-
   int len;
-
   int ciphertext_len;
 
   /* Create and initialise the context */
   if (!(ctx = EVP_CIPHER_CTX_new()))
     handleErrors();
-
   /*
    * Initialise the encryption operation. IMPORTANT - ensure you use a key
    * and IV size appropriate for your cipher
@@ -34,7 +32,6 @@ int encrypt(const EVP_CIPHER *cipherType, unsigned char *plaintext,
    */
   if (1 != EVP_EncryptInit_ex(ctx, cipherType, NULL, key, iv))
     handleErrors();
-
   /*
    * Provide the message to be encrypted, and obtain the encrypted output.
    * EVP_EncryptUpdate can be called multiple times if necessary
@@ -43,7 +40,6 @@ int encrypt(const EVP_CIPHER *cipherType, unsigned char *plaintext,
     handleErrors();
 
   ciphertext_len = len;
-
   /*
    * Finalise the encryption. Further ciphertext bytes may be written at
    * this stage.
@@ -115,9 +111,17 @@ int main() {
 
   ///////////////////////////////////////////////////////////////////////
   /* A 256 bit key */
-  unsigned char key[32] = "0123456789012345678901234567801";
+  unsigned char key256[32];
+  unsigned char key128[16];
+  unsigned char iv[16];
+
+  RAND_bytes(key256, sizeof(key256));
+  RAND_bytes(key128, sizeof(key128));
+  RAND_bytes(iv, sizeof(iv));
+
   /* A 128 bit IV */
-  unsigned char iv[16] = "012345678901234";
+  unsigned char *iv16[16] = {"012345678901234"};
+  unsigned char *iv32[32] = {"012345678901234012345678901234"};
   /* Message to be encrypted */
   unsigned char *plaintext =
       (unsigned char *)"The quick brown fox jumps over the lazy dog";
@@ -145,7 +149,7 @@ int main() {
 
   /* Decrypt the ciphertext */
   decryptedtext_len = decrypt(EVP_aes_256_cbc(), ciphertext, ciphertext_len,
-                              key, iv, decryptedtext);
+                              key256, iv, decryptedtext);
 
   /* Add a NULL terminator. We are expecting printable text */
   decryptedtext[decryptedtext_len] = '\0';
@@ -153,5 +157,42 @@ int main() {
   /* Show the decrypted text */
   printf("Decrypted text is:\n");
   printf("%s\n", decryptedtext);
+
+  // 100MB
+  benchmark(EVP_aes_256_cbc(), key256, iv, 100 * 1024 * 1024, true);
+
+  // 1000MB
+  benchmark(EVP_aes_256_cbc(), key256, iv, 1000 * 1024 * 1024, true);
+
   return 0;
+}
+
+double benchmark(EVP_CIPHER *cipherType, unsigned char *key, unsigned char *iv,
+                 long dataSize, bool doEncrypt) {
+
+  unsigned char *plaintext = (unsigned char *)malloc(dataSize);
+  unsigned char *ciphertext = (unsigned char *)malloc(dataSize + 16);
+  unsigned char *decrypted = (unsigned char *)malloc(dataSize + 16);
+
+  RAND_bytes(plaintext, dataSize);
+
+  struct timespec start, end;
+  clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+
+  if (doEncrypt) {
+    encrypt(cipherType, plaintext, dataSize, key, iv, ciphertext);
+  } else {
+    // need ciphertext first to decrypt
+    int clen = encrypt(cipherType, plaintext, dataSize, key, iv, ciphertext);
+    decrypt(cipherType, ciphertext, clen, key, iv, decrypted);
+  }
+
+  clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
+
+  free(plaintext);
+  free(ciphertext);
+  free(decrypted);
+
+  return (end.tv_sec - start.tv_sec) * 1000.0 +
+         (end.tv_nsec - start.tv_nsec) / 1e6;
 }
