@@ -124,7 +124,7 @@ double benchmark(const EVP_CIPHER *cipherType, unsigned char *key,
   }
 
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
-
+  // free the memory used.
   free(plaintext);
   free(ciphertext);
   free(decrypted);
@@ -134,14 +134,17 @@ double benchmark(const EVP_CIPHER *cipherType, unsigned char *key,
 }
 
 int main() {
+  // initialise keys and the initialiser vector
   unsigned char key256[32];
   unsigned char key128[16];
   unsigned char iv[16];
+  // Using Rand for random initialization
   RAND_bytes(key256, sizeof(key256));
   RAND_bytes(key128, sizeof(key128));
   RAND_bytes(iv, sizeof(iv));
 
-  // AES 256
+  // just calling the benchmark with the different parameters and ecryption
+  // methods AES 256
   double result =
       benchmark(EVP_aes_256_cbc(), key256, iv, 100 * 1024 * 1024, true);
   std::cout << "AES-256-CBC   encrypt 100MB:  " << result << "ms\n";

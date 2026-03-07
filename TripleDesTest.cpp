@@ -1,5 +1,4 @@
 #include "NETWORKsec2.hpp"
-#include <chrono>
 #include <cstring>
 #include <ctime>
 #include <iostream>
@@ -135,14 +134,15 @@ double benchmark(const EVP_CIPHER *cipherType, unsigned char *key,
 }
 
 int main() {
+  // again using rand to fill the key and the initialization vector.
   unsigned char key3des[24];
   unsigned char iv3des[8];
   RAND_bytes(key3des, sizeof(key3des));
   RAND_bytes(iv3des, sizeof(iv3des));
-
+  // reusing result for each benchmark
   double result;
-
-  // 3DES CBC
+  // passing the different parameters into benchmark
+  //  3DES CBC
   result =
       benchmark(EVP_des_ede3_cbc(), key3des, iv3des, 100 * 1024 * 1024, true);
   std::cout << "3DES-CBC  encrypt 100MB:  " << result << "ms\n";
